@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Music Recommendation System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+      body {
+        background: #121212;
+        color: #fff;
+      }
+      .navbar {
+        margin-bottom: 30px;
+      }
+      .form-group label {
+        color: #bbb;
+      }
+      .card {
+        margin: 20px 0;
+        background: #1f1f1f;
+        border: none;
+      }
+      .card-title {
+        color: #fff;
+      }
+      footer {
+        background: #1f1f1f;
+        color: #bbb;
+        padding: 10px 0;
+        text-align: center;
+        margin-top: 30px;
+      }
+      section {
+        padding: 60px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">Music RecSys</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="#">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#features">Features</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#pricing">Pricing</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#contact">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      <h2 class="text-center">Music Recommendation System</h2>
+      <form id="recommendationForm">
+        <div class="form-group mb-3">
+          <label for="names">Select Song</label>
+          <select id="names" name="names" class="form-control">
+            {% for i in name %}
+            <option value="{{i}}">{{i}}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <button type="button" onclick="submitForm()" class="btn btn-primary btn-lg w-100">Recommendation</button>
+      </form>
+
+      <div id="results" class="row mt-4">
+        <!-- Results will be displayed here -->
+      </div>
+    </div>
+
+    <section id="features" class="bg-light text-dark">
+      <div class="container">
+        <h2 class="text-center">Features</h2>
+        <p>Details about features...</p>
+      </div>
+    </section>
+
+    <section id="pricing">
+      <div class="container">
+        <h2 class="text-center">Pricing</h2>
+        <p>Details about pricing...</p>
+      </div>
+    </section>
+
+    <section id="contact" class="bg-light text-dark">
+      <div class="container">
+        <h2 class="text-center">Contact</h2>
+        <p>Contact information...</p>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container">
+        <p>&copy; 2024 Music Recommendation System</p>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script>
+      function submitForm() {
+        const form = document.getElementById('recommendationForm');
+        const formData = new FormData(form);
+
+        fetch('/recom', {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          const results = document.getElementById('results');
+          results.innerHTML = '';
+
+          data.songs.forEach(song => {
+            const card = document.createElement('div');
+            card.className = 'col-md-4';
+            card.innerHTML = `
+              <div class="card">
+                <img src="{{url_for('static',filename='headphone.jpg')}}" class="card-img-top" alt="...">
+                <div class="card-body">
+                  <h5 class="card-title">${song.name}</h5>
+                  <p>
+                    <a href="${song.youtube_link}" target="_blank">Watch on YouTube</a><br>
+                    <a href="${song.spotify_link}" target="_blank">Listen on Spotify</a>
+                  </p>
+                </div>
+              </div>
+            `;
+            results.appendChild(card);
+          });
+        })
+        .catch(error => console.error('Error:', error));
+      }
+    </script>
+  </body>
+</html>
